@@ -86,4 +86,4 @@ outputs:
     description: Web application endpoint
     value:
       ip_address: { get_property: [ host, ip ] }
-#      port: { get_property: [ nodecellar, port ] }
+      port: { get_property: [ nginx, port ] }

@@ -1,2 +1,2 @@
 # About
-Sample bluprint that includes Django with Gunicorn anf Nginx
+Simple blueprint that includes Django with Gunicorn anג Nginx

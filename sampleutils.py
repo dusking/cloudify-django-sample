@@ -3,8 +3,10 @@
 import glob
 import shlex
 import subprocess
+import tempfile
+from jinja2 import Template
 
-# from cloudify import ctx
+from cloudify import ctx
 
 
 def create_folder(name):
@@ -46,3 +48,17 @@ def run(command, retries=0, ignore_failures=False, globx=False):
                 command_str, proc.aggr_stderr)
             raise RuntimeError(msg)
     return proc
+
+
+def download_resource_and_render(source, destination, params):
+    ctx.logger.info('Downloading resource {0} to {1}'.format(source, destination))
+    template = Template(ctx.get_resource(source))
+
+    ctx.logger.debug('The config dict for the Jinja2 template: {0}.'.format(params))
+
+    ctx.logger.debug('Rendering the Jinja2 template to {0}.'.format(destination))
+    with tempfile.NamedTemporaryFile(delete=False) as temp_config:
+        temp_config.write(template.render(params))
+    sudo(['mv', temp_config.name, destination])
+
+    ctx.logger.debug('Great success')

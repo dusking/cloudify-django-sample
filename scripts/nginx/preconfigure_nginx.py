@@ -15,41 +15,21 @@ sys.path.append(dirname(__file__))
 import sampleutils
 
 
-def _copy_nginx_config_file():
-    ctx.logger.info('Going to deploy Nginx configuration file...')
-    ctx.download_resource(resource_path=join('config', 'nginx', 'nginx.conf'),
-                          target_path='/home/vagrant/djangosample/src/mysite/nginx.conf')
-
-
-def _updae_file_content(filename, changes):
-    with open(filename) as f:
-        file_data = f.read()
-    for old_string, new_string in changes.iteritems():
-        file_data = file_data.replace(old_string, new_string)
-    with open(filename, 'w') as f:
-        f.write(file_data)
-
-
-def _set_nginx_config_file(host_ip, listen_port):
+def _set_nginx_config_file(host_ip):
     config_file = '/home/vagrant/djangosample/src/mysite/nginx.conf'
-    changes = {
-        '{{HOST_IP}}': host_ip,
-        '{{LISTEN_PORT}}': listen_port
-    }
-    _updae_file_content(config_file, changes)
-
-    # sampleutils.create_folder('/home/www/mysite')
-    # ctx.logger.info('Deploying blueprint resource {0} to {1}'.format(source, destination))
-    # sampleutils.copy(source, destination)
+    params = ctx.source.node.properties.copy()
+    params.update({'host_ip': host_ip})
+    sampleutils.download_resource_and_render(source='config/nginx/nginx.conf.template',
+                                             destination=config_file,
+                                             params=params)
 
 
 def main():
     try:
         host_ip = ctx.source.instance.host_ip
-        listen_port = ctx.source.instance.runtime_properties['listen_port']
+        listen_port = ctx.source.node.properties['port']
         ctx.logger.info('nginx configuration, using ip: {}, port: {}'.format(host_ip, listen_port))
-        _copy_nginx_config_file()
-        _set_nginx_config_file(host_ip, listen_port)
+        _set_nginx_config_file(host_ip)
         ctx.logger.info('Successfully updated nginx configuration')
     except:
         ctx.logger.exception('failed')

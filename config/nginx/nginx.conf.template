@@ -7,8 +7,8 @@ upstream django {
 
 # configuration of the server
 server {
-    listen      {{LISTEN_PORT}};
-    server_name {{HOST_IP}};
+    listen      {{port}};
+    server_name {{host_ip}};
     charset     utf-8;
 
     client_max_body_size 75M;   # max upload size, adjust to taste

@@ -1,0 +1,87 @@
+################################################################
+# Blueprint node types.
+#
+# specific new types for the django app.
+# these types are mapped to scripts that are resposible
+# for the lifecycle operation.
+################################################################
+
+node_types:
+
+  djangosample.nodes.MyApplicationServer:
+    derived_from: cloudify.nodes.ApplicationServer
+    properties:
+      port:
+        description: web server listen port
+        type: integer
+        default: 8000
+
+  djangosample.nodes.DjangoServer:
+    derived_from: cloudify.nodes.ApplicationServer
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        start: scripts/django/install_django.sh
+        delete: scripts/django/uninstall_django.sh
+
+  djangosample.nodes.Gunicorn:
+    derived_from: cloudify.nodes.ApplicationServer
+    interfaces:
+        cloudify.interfaces.lifecycle:
+          create: scripts/gunicorn/install_gunicorn.sh
+          start: scripts/gunicorn/start_gunicorn_daemon.py
+          stop: scripts/gunicorn/stop_gunicorn_daemon.py
+          delete: scripts/gunicorn/uninstall_gunicorn.sh
+
+  djangosample.nodes.NginxServer:
+    derived_from: djangosample.nodes.MyApplicationServer
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: scripts/nginx/install_nginx.sh
+        configure: scripts/nginx/configure_nginx.sh
+        delete: scripts/nginx/uninstall_nginx.sh
+
+  djangosample.nodes.DjangoApplicationModule:
+    derived_from: cloudify.nodes.ApplicationModule
+    properties:
+      port:
+        description: Web application port
+        type: integer
+        default: 8080
+      application_url:
+        description: >
+          URL to an archive containing the application source.
+          The archive must contain one top level directory.
+        default: https://github.com/dusking/django-basic-sample/archive/master.tar.gz
+      startup_script:
+        description: >
+          This script will be used to start the nodejs application.
+          The path is relative to the top level single directory inside
+          the archive
+        type: string
+        default: server.js
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: scripts/djangosample/install_djangosample_app.sh
+        start: scripts/djangosample/start_djangosample_app.sh
+        stop: scripts/djangosample/stop_djangosample_app.sh
+        delete: scripts/djangosample/uninstall_djangosample_app.sh
+
+relationships:
+
+  django_contained_in_host:
+    derived_from: cloudify.relationships.contained_in
+    source_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        preconfigure: scripts/django/preconfigure_host.py
+
+  nginx_contained_in_host:
+    derived_from: cloudify.relationships.contained_in
+    source_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        preconfigure: scripts/nginx/preconfigure_nginx.py
+
+  node_contained_in_django:
+    derived_from: cloudify.relationships.contained_in
+    target_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        preconfigure: scripts/djangosample/preconfigure_djangosample.py

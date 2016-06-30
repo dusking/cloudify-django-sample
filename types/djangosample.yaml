@@ -70,9 +70,3 @@ relationships:
     source_interfaces:
       cloudify.interfaces.relationship_lifecycle:
         preconfigure: scripts/nginx/preconfigure_nginx.py
-
-  node_contained_in_django:
-    derived_from: cloudify.relationships.contained_in
-    target_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        preconfigure: scripts/djangosample/preconfigure_djangosample.py

@@ -62,7 +62,7 @@ node_templates:
   djangosample:
     type: djangosample.nodes.DjangoApplicationModule
     relationships:
-      - type: node_contained_in_django
+      - type: cloudify.relationships.contained_in
         target: django
 
   gunicorn:

@@ -3,7 +3,7 @@
 # This script is running as postgres user
 # As if the first line was: sudo su - postgres
 
-set -e
+set +e
 
 psql -c "CREATE DATABASE mysite"
 psql -c "CREATE USER mysiteuser WITH PASSWORD 'password'"

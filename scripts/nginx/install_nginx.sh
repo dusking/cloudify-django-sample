@@ -9,7 +9,9 @@ function install() {
     set -e
 
     if [[ ! -z ${yum_cmd} ]]; then
+        ctx logger info "Update environment for nginx"
         sudo yum -y install epel-release
+        ctx logger info "Going to install nginx"
         sudo yum -y install nginx
     elif [[ ! -z ${aptget_cmd} ]]; then
         ctx logger info "Update environment for nginx"

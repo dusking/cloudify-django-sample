@@ -21,10 +21,6 @@ def _verify_server_up(process, server_name):
         raise Exception('Process {} finished with return-code: {}'.format(server_name, process.returncode))
 
 
-def _set_runtime_properties(pid):
-    ctx.instance.runtime_properties['gunicorn_pid'] = pid
-
-
 def main():
     env_path = os.environ.get('VIRTUALENV', None)
     ctx.logger.info("Going to start gunicorn HTTP server, env_path: ({})".format(env_path))
@@ -42,7 +38,6 @@ def main():
                                stdout=open(os.path.join('/tmp', 'gunicorn_config.stdout'), 'w'),
                                stderr=open(os.path.join('/tmp', 'gunicorn_config.stderr'), 'w'))
     _verify_server_up(process, 'Gunicorn')
-    _set_runtime_properties(process.pid)
     ctx.logger.info("Successfully started gunicorn HTTP Server ({})".format(process.pid))
 
 

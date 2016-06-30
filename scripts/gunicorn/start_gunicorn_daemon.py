@@ -31,8 +31,8 @@ def main():
     try:
         env_path = os.environ.get('VIRTUALENV', None)
         ctx.logger.info("Going to start gunicorn HTTP server, env_path: ({})".format(env_path))
-        django_project_path = '/home/vagrant/djangosample/src/'
-        sockfile_path = '/home/vagrant/djangosample/src/mysite/mysite.sock'
+        django_project_path = os.path.join(os.path.expanduser('~'), 'djangosample/src/')
+        sockfile_path = os.path.join(django_project_path, 'mysite/mysite.sock')
         process_args = [
             os.path.join(env_path, 'bin/python'),
             '-m', 'gunicorn.app.wsgiapp',
@@ -47,9 +47,9 @@ def main():
         _verify_server_up(process, 'Gunicorn')
         _set_runtime_properties(process.pid)
         ctx.logger.info("Successfully started gunicorn HTTP Server ({})".format(process.pid))
-    except:
-        ctx.logger.exception('failed')
-        raise
+    except Exception, e:
+        ctx.logger.exception('Failed to start gunicorn with error: {}'.format(e))
+        raise e
 
 
 if __name__ == '__main__':

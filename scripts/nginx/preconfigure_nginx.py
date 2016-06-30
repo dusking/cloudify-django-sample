@@ -16,7 +16,7 @@ import sampleutils
 
 
 def _set_nginx_config_file(host_ip):
-    config_file = '/home/vagrant/djangosample/src/mysite/nginx.conf'
+    config_file = os.path.join(os.path.expanduser('~'), 'djangosample/src/mysite/nginx.conf')
     params = ctx.source.node.properties.copy()
     params.update({'host_ip': host_ip})
     sampleutils.download_resource_and_render(source='config/nginx/nginx.conf.template',

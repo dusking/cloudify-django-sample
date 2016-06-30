@@ -55,7 +55,6 @@ node_types:
       cloudify.interfaces.lifecycle:
         create: scripts/djangosample/install_djangosample_app.sh
         start: scripts/djangosample/start_djangosample_app.sh
-        stop: scripts/djangosample/stop_djangosample_app.sh
         delete: scripts/djangosample/uninstall_djangosample_app.sh
 
 relationships:

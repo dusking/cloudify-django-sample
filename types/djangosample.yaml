@@ -15,14 +15,22 @@ node_types:
         start: scripts/django/install_django.sh
         delete: scripts/django/uninstall_django.sh
 
+  djangosample.nodes.PostgreSQL:
+    derived_from: cloudify.nodes.DBMS
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: scripts/postgresql/install_postgresql.sh
+        delete: scripts/postgresql/uninstall_postgresql.sh
+        configure: scripts/postgresql/configure_postgresql.sh
+
   djangosample.nodes.Gunicorn:
     derived_from: cloudify.nodes.ApplicationServer
     interfaces:
-        cloudify.interfaces.lifecycle:
-          create: scripts/gunicorn/install_gunicorn.sh
-          start: scripts/gunicorn/start_gunicorn_daemon.py
-          stop: scripts/gunicorn/stop_gunicorn_daemon.py
-          delete: scripts/gunicorn/uninstall_gunicorn.sh
+      cloudify.interfaces.lifecycle:
+        create: scripts/gunicorn/install_gunicorn.sh
+        start: scripts/gunicorn/start_gunicorn_daemon.py
+        stop: scripts/gunicorn/stop_gunicorn_daemon.py
+        delete: scripts/gunicorn/uninstall_gunicorn.sh
 
   djangosample.nodes.NginxServer:
     derived_from: cloudify.nodes.ApplicationServer

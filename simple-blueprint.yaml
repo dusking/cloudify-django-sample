@@ -45,11 +45,19 @@ node_templates:
         user: { get_input: agent_user }
         key: { get_input: agent_private_key_path }
 
+  postgresql:
+    type: djangosample.nodes.PostgreSQL
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: host
+
   django:
     type: djangosample.nodes.DjangoServer
     relationships:
       - type: django_contained_in_host
         target: host
+      - type: cloudify.relationships.depends_on
+        target: postgresql
 
   djangosample:
     type: djangosample.nodes.DjangoApplicationModule

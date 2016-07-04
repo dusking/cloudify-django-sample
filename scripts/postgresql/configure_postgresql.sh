@@ -9,7 +9,11 @@ function init_db_if_on_centos() {
     if [[ ! -z ${yum_cmd} ]]; then
         ctx logger info "Creating a new PostgreSQL database cluster, and starting"
         sudo postgresql-setup initdb
+        ctx logger info "Updating pg_hba.conf"
+        sudo awk '/^host/{gsub(/ident/, "md5")};{print}' /var/lib/pgsql/data/pg_hba.conf > pg_hba.conf.new
+        sudo mv pg_hba.conf.new /var/lib/pgsql/data/pg_hba.conf
         ctx logger info "Starting postgresql"
+        sudo chkconfig postgresql on
         sudo systemctl start postgresql
         sudo systemctl enable postgresql
     fi

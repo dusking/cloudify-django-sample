@@ -54,7 +54,7 @@ node_templates:
   django:
     type: djangosample.nodes.DjangoServer
     relationships:
-      - type: django_contained_in_host
+      - type: cloudify.relationships.contained_in
         target: host
       - type: cloudify.relationships.depends_on
         target: postgresql

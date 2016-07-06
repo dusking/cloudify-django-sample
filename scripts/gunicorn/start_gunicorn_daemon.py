@@ -1,44 +1,29 @@
 import os
-import socket
 import subprocess
 from cloudify import ctx
 
 
-def _port_available(port):
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        s.bind(('0.0.0.0', port))
-        return True
-    except:
-        return False
-    finally:
-        s.close()
-
-
-def _verify_server_up(process, server_name):
-    if process.returncode is not None:
-        ctx.logger.error('Process {} finished with return-code: {}'.format(server_name, process.returncode))
-        raise Exception('Process {} finished with return-code: {}'.format(server_name, process.returncode))
-
-
 def main():
-    env_path = os.environ.get('VIRTUALENV', None)
-    ctx.logger.info("Going to start gunicorn HTTP server, env_path: ({})".format(env_path))
+    env_path = os.environ.get('VIRTUALENV')
+    if not env_path:
+        raise Exception('missing VIRTUALENV')
+    ctx.logger.info("Going to start gunicorn HTTP server, env_path: ({0})".format(env_path))
     django_project_path = os.path.join(os.path.expanduser('~'), 'djangosample/src/')
     sockfile_path = os.path.join(django_project_path, 'mysite/mysite.sock')
     process_args = [
         os.path.join(env_path, 'bin/python'),
         '-m', 'gunicorn.app.wsgiapp',
-        '--bind', 'unix:{}'.format(sockfile_path),
+        '--bind', 'unix:{0}'.format(sockfile_path),
         'mysite.wsgi:application',
         '--chdir', django_project_path
     ]
-    ctx.logger.info("Going to run gunicorn: {}".format(' '.join(process_args)))
+    ctx.logger.info("Going to run gunicorn: {0}".format(' '.join(process_args)))
     process = subprocess.Popen(process_args,
-                               stdout=open(os.path.join('/tmp', 'gunicorn_config.stdout'), 'w'),
-                               stderr=open(os.path.join('/tmp', 'gunicorn_config.stderr'), 'w'))
-    _verify_server_up(process, 'Gunicorn')
-    ctx.logger.info("Successfully started gunicorn HTTP Server ({})".format(process.pid))
+                               stdout=open('/tmp/gunicorn_config.stdout', 'w'),
+                               stderr=open('/tmp/gunicorn_config.stderr', 'w'))
+    if process.returncode is not None:
+        raise Exception('Process finished with return-code: {0}'.format(process.returncode))
+    ctx.logger.info("Successfully started gunicorn HTTP Server ({0})".format(process.pid))
 
 
 if __name__ == '__main__':

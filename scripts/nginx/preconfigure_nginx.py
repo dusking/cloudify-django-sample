@@ -17,8 +17,10 @@ import sampleutils
 
 def _set_nginx_config_file(host_ip):
     config_file = os.path.join(os.path.expanduser('~'), 'djangosample/src/mysite/nginx.conf')
+    project_root_dir = os.path.join(os.path.expanduser('~'), 'djangosample/src')
     params = ctx.source.node.properties.copy()
-    params.update({'host_ip': host_ip})
+    params.update({'host_ip': host_ip,
+                   'project_root_dir': project_root_dir})
     sampleutils.download_resource_and_render(source='config/nginx/nginx.conf.template',
                                              destination=config_file,
                                              params=params)

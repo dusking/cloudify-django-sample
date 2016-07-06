@@ -27,15 +27,11 @@ def _set_nginx_config_file(host_ip):
 
 
 def main():
-    try:
-        host_ip = ctx.source.instance.host_ip
-        listen_port = ctx.source.node.properties['port']
-        ctx.logger.info('nginx configuration, using ip: {0}, port: {1}'.format(host_ip, listen_port))
-        _set_nginx_config_file(host_ip)
-        ctx.logger.info('Successfully updated nginx configuration')
-    except:
-        ctx.logger.exception('failed')
-        raise
+    host_ip = ctx.source.instance.host_ip
+    listen_port = ctx.source.node.properties['port']
+    ctx.logger.info('nginx configuration, using ip: {0}, port: {1}'.format(host_ip, listen_port))
+    _set_nginx_config_file(host_ip)
+    ctx.logger.info('Successfully updated nginx configuration')
 
 
 if __name__ == '__main__':

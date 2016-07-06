@@ -28,7 +28,4 @@ function install() {
     fi
 }
 
-LISTEN_PORT=$(ctx node properties port)
-ctx instance runtime_properties listen_port ${LISTEN_PORT}
-
 install

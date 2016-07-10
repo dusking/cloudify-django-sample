@@ -54,16 +54,10 @@ node_types:
     interfaces:
       cloudify.interfaces.lifecycle:
         create: scripts/djangosample/install_djangosample_app.sh
-        start: scripts/djangosample/start_djangosample_app.sh
+        configure: scripts/djangosample/configure_djangosample_app.sh
         delete: scripts/djangosample/uninstall_djangosample_app.sh
 
 relationships:
-
-  django_contained_in_host:
-    derived_from: cloudify.relationships.contained_in
-    source_interfaces:
-      cloudify.interfaces.relationship_lifecycle:
-        preconfigure: scripts/django/preconfigure_host.py
 
   nginx_contained_in_host:
     derived_from: cloudify.relationships.contained_in

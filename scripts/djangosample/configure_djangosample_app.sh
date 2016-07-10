@@ -2,11 +2,9 @@
 
 set -e
 
-SOURCE_PATH=$(ctx instance runtime_properties source_path)
-ctx logger info "Starting djangosample at ${SOURCE_PATH}"
-
 cd ${VIRTUALENV}
 ctx logger info "Starting djangosample migration"
+SOURCE_PATH=$(ctx instance runtime_properties source_path)
 bin/python ${SOURCE_PATH}/manage.py migrate
 
 ctx logger info "Collect static files..."
